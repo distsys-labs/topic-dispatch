@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0] - 2026-02-05
+
+### BREAKING CHANGES
+
+- **ESM-only:** Package is now pure ESM. CommonJS `require()` is no longer supported. Use `import` instead.
+- **Node.js 22+:** Minimum Node.js version is now 22.0.0
+- **Module resolution:** Entry point changed from `src/index.js` to `dist/index.js` (compiled output)
+
+### Added
+
+- **TypeScript:** Complete TypeScript rewrite with full type definitions
+- **Type exports:** Export `Dispatcher`, `Handler`, and `Subscription` types
+- **Modern tooling:** Vitest for testing, TypeScript compiler for building
+- **Zero dependencies:** Removed `fauxdash`, using native JavaScript implementations
+
+### Changed
+
+- **Build system:** Now uses TypeScript compiler instead of shipping raw source
+- **Test framework:** Migrated from Mocha/Chai to Vitest
+- **Code style:** Modernized to ES2022 with strict TypeScript
+- **Package structure:** Ships `dist/` directory with compiled JS and type definitions
+- **Keywords:** Added "typescript" and "esm" to package metadata
+- **Repository URL:** Corrected to point to proper repository
+
+### Removed
+
+- **Dependencies:** Removed `fauxdash` runtime dependency
+- **DevDependencies:** Removed `mocha`, `chai`, `chai-as-promised`, `nyc`, `standard`
+- **CommonJS support:** No longer compatible with `require()`
+
+### Migration
+
+See [MIGRATION.md](./MIGRATION.md) for detailed migration instructions from v2.x to v3.0.
+
+### Notes
+
+- All functionality from v2.x is preserved
+- API remains identical (only import syntax changes)
+- All tests pass without behavioral changes
+- 85% code coverage maintained
+
 ## [2.1.0](///compare/v2.0.0...v2.1.0) (2021-04-22)
 
 

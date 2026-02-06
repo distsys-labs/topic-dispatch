@@ -8,3 +8,10 @@ coverage/
 .vagrant/
 .nyc_output
 .git
+src/
+tsconfig.json
+tsconfig.eslint.json
+vitest.config.ts
+eslint.config.js
+Makefile
+*.tsbuildinfo

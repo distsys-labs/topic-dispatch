@@ -1,38 +1,59 @@
 {
   "name": "topic-dispatch",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "a very simplistic amqp-style topic-based dispatcher",
-  "main": "src/index.js",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha ./spec/**/*.spec.js",
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint src spec --ext .ts",
+    "lint:fix": "eslint src spec --ext .ts --fix",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm test",
     "release": "standard-version"
   },
   "repository": {
     "type": "git",
-    "url": "github.com/deftly/mfsm"
+    "url": "https://github.com/arobson/topic-dispatch"
   },
   "keywords": [
-    "fsm"
+    "topic",
+    "dispatch",
+    "event",
+    "emitter",
+    "pubsub",
+    "amqp",
+    "pattern",
+    "matching",
+    "typescript",
+    "esm"
   ],
   "author": "Alex Robson",
   "license": "MIT",
-  "dependencies": {
-    "fauxdash": "^1.5.0"
+  "engines": {
+    "node": ">=22"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "mocha": "^8.2.1",
-    "mocha-lcov-reporter": "^1.3.0",
-    "nyc": "^15.1.0",
-    "standard": "^16.0.3",
-    "standard-version": "^9.1.0"
-  },
-  "standard": {
-    "env": [
-      "mocha",
-      "_",
-      "should"
-    ]
+    "@eslint/js": "^9.18.0",
+    "@types/node": "^22.10.5",
+    "@vitest/coverage-v8": "^2.1.8",
+    "eslint": "^9.18.0",
+    "standard-version": "^9.5.0",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.19.1",
+    "vitest": "^2.1.8"
   }
 }
