@@ -15,9 +15,10 @@ Topics are dot-separated strings (`'order.created'`, `'user.profile.updated'`). 
 | `'*.created'` | `'order.created'`, `'user.created'` | `'account.user.created'` |
 | `'account.#'` | `'account.created'`, `'account.user.created'` | `'order.created'` |
 | `'#.created'` | `'order.created'`, `'account.user.created'` | `'order.updated'` |
-| `'*'` or `'#'` | everything | — |
+| `'*'` | any single-segment topic (`'order'`, not `'order.created'`) | — |
+| `'#'` | everything, any depth | — |
 
-> Note: per the README, `*` and `#` behave identically as top-level wildcards (both match any single segment). `#` is more powerful in positional use (`account.#` matches multiple segments; `account.*` matches exactly one).
+> `*` matches exactly one segment; `#` matches zero or more segments (a true catch-all). `account.#` matches multiple segments; `account.*` matches exactly one.
 
 ## Quick Start
 
