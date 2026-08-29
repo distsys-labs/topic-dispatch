@@ -54,9 +54,17 @@ export default function subscribe<T = any>(
       let result = fn(data, topic)
       if (result) {
         if (typeof result.then === 'function' && typeof result.catch === 'function') {
+          // This derivative chain exists only to drive the then()/catch()
+          // convenience API - the original `result` promise is returned
+          // separately below and is the real channel callers observe (e.g.
+          // aggregated via Promise.all in topics.ts's emit()). Without a
+          // fallback no-op here, a subscription with no .catch() registered
+          // left this chain's rejection completely unobserved - a second,
+          // independent unhandled rejection on top of whatever the caller
+          // does with emit()'s own returned promise.
           result
             .then(subscription.onResult || ((x: any) => x))
-            .catch(subscription.onError)
+            .catch(subscription.onError || (() => {}))
         } else {
           if (subscription.onResult) {
             subscription.onResult(result)

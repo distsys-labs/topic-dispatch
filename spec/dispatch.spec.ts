@@ -151,4 +151,79 @@ describe('Dispatch', function() {
     await dispatcher.emit('test', '')
     expect(results).toEqual(['a'])
   })
+
+  describe('AMQP-style wildcard semantics', function () {
+    it('should match "*" against exactly one segment, not zero or many', function () {
+      const dispatcher = Dispatcher()
+      let dispatched = 0
+      dispatcher.on('account.*', () => { dispatched++ })
+      dispatcher.emit('account.created', {})
+      expect(dispatched).toBe(1)
+      dispatcher.emit('account.user.created', {})
+      expect(dispatched).toBe(1)
+      dispatcher.emit('account', {})
+      expect(dispatched).toBe(1)
+    })
+
+    it('should match "#" against zero or more segments (catch-all)', function () {
+      const dispatcher = Dispatcher()
+      let dispatched = 0
+      dispatcher.on('account.#', () => { dispatched++ })
+      dispatcher.emit('account.created', {})
+      expect(dispatched).toBe(1)
+      dispatcher.emit('account.user.created', {})
+      expect(dispatched).toBe(2)
+    })
+
+    it('should treat a bare "*" as matching any single-segment topic', function () {
+      const dispatcher = Dispatcher()
+      let dispatched = 0
+      dispatcher.on('*', () => { dispatched++ })
+      dispatcher.emit('one', {})
+      expect(dispatched).toBe(1)
+      dispatcher.emit('one.two', {})
+      expect(dispatched).toBe(1)
+    })
+
+    it('should treat a bare "#" as matching any topic, any depth', function () {
+      const dispatcher = Dispatcher()
+      let dispatched = 0
+      dispatcher.on('#', () => { dispatched++ })
+      dispatcher.emit('one', {})
+      dispatcher.emit('one.two.three', {})
+      expect(dispatched).toBe(2)
+    })
+  })
+
+  describe('once() return value', function () {
+    it('should return a cancelable Subscription, not undefined', function () {
+      const dispatcher = Dispatcher()
+      let dispatched = 0
+      const subscription = dispatcher.once('one', () => { dispatched++ })
+      expect(subscription).toBeDefined()
+      expect(typeof subscription.off).toBe('function')
+      subscription.off()
+      dispatcher.emit('one', {})
+      expect(dispatched).toBe(0)
+      expect(dispatcher.isQuiet()).toBe(true)
+    })
+  })
+
+  describe('unhandled rejection safety', function () {
+    it('should not leak an unobserved rejection when a subscription with no .catch() has a handler that rejects', async function () {
+      const dispatcher = Dispatcher()
+      const unhandled: unknown[] = []
+      const onUnhandledRejection = (reason: unknown) => { unhandled.push(reason) }
+      process.on('unhandledRejection', onUnhandledRejection)
+      try {
+        dispatcher.on('one', () => Promise.reject(new Error('boom')))
+        await expect(dispatcher.emit('one', {})).rejects.toThrow('boom')
+        // give any stray unhandled rejection a chance to surface
+        await new Promise((resolve) => setTimeout(resolve, 10))
+        expect(unhandled).toEqual([])
+      } finally {
+        process.off('unhandledRejection', onUnhandledRejection)
+      }
+    })
+  })
 })

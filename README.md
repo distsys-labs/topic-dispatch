@@ -30,13 +30,13 @@ import dispatcher from 'topic-dispatch'
 
 const topics = dispatcher()
 
-topics.on('*', (event, topic) => {}) // catch all
-topics.on('#', (event, topic) => {}) // catch all
+topics.on('*', (event, topic) => {}) // catch any single-segment topic
+topics.on('#', (event, topic) => {}) // catch all, any depth
 topics.on('connected', (event, topic) => {}) // catch 'connected'
-topics.on('account.*', (event, topic) => {}) // catch anything starting with 'account'
-topics.on('*.created', (event, topic) => {}) // catch anything ending in .created'
-topics.on('account.#', (event, topic) => {}) // catch any two segment topic beginning with `account`
-topics.on('#.created', (event, topic) => {}) // catch any two segment topic ending with `created`
+topics.on('account.*', (event, topic) => {}) // catch 'account.created', not 'account.user.created'
+topics.on('*.created', (event, topic) => {}) // catch '<anything>.created', one segment before it
+topics.on('account.#', (event, topic) => {}) // catch anything starting with 'account.', any depth
+topics.on('#.created', (event, topic) => {}) // catch anything ending in '.created', any depth before it
 topics.once('ready', (event, topic) => {}) // removes itself after one event is received
 
 const handler = () => {}
@@ -83,8 +83,8 @@ subscription.off()
 
 The library supports AMQP-style topic matching:
 
-- `*` - matches any single segment (e.g., `account.*` matches `account.created` but not `account.user.created`)
-- `#` - matches any single segment (same as `*`)
+- `*` - matches exactly one segment (e.g., `account.*` matches `account.created` but not `account.user.created`)
+- `#` - matches zero or more segments, a catch-all (e.g., `account.#` matches both `account.created` and `account.user.created`)
 - Exact match - `account.created` only matches `account.created`
 
 ## Promise-based Emit

@@ -27,10 +27,12 @@ function createMatcher(pattern: string): Matcher {
       segments.push('^')
     }
     switch (part) {
-      case '*':
+      // AMQP topic-exchange convention: '*' matches exactly one segment,
+      // '#' matches zero or more segments (catch-all).
+      case '#':
         segments.push('.+')
         break
-      case '#':
+      case '*':
         if (i > 0) {
           segments.push('[.]')
         }
@@ -38,7 +40,7 @@ function createMatcher(pattern: string): Matcher {
         break
       default:
         if (i > 0) {
-          if (parts[i - 1] === '*') {
+          if (parts[i - 1] === '#') {
             segments.push('[.]?')
           } else {
             segments.push('[.]')
