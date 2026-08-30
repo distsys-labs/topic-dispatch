@@ -5,7 +5,7 @@ export interface Dispatcher {
   emit: (topicName: string, event: any, notify?: (hasHandlers: boolean) => void) => Promise<any[]>
   isQuiet: () => boolean
   on: (pattern: string, fn: Handler) => Subscription
-  once: (pattern: string, fn: Handler) => void
+  once: (pattern: string, fn: Handler) => Subscription
   removeListener: (pattern: string, fn: Handler) => void
   removeAllListeners: (pattern?: string) => void
 }
@@ -17,7 +17,7 @@ function on(topics: ReturnType<typeof createTopics>, pattern: string, fn: Handle
   return topics.add(pattern, fn)
 }
 
-function once(topics: ReturnType<typeof createTopics>, pattern: string, fn: Handler): void {
+function once(topics: ReturnType<typeof createTopics>, pattern: string, fn: Handler): Subscription {
   if (typeof fn !== 'function') {
     throw new Error(`Cannot attach ${typeof fn} to '${pattern}' as a handler`)
   }
@@ -27,6 +27,7 @@ function once(topics: ReturnType<typeof createTopics>, pattern: string, fn: Hand
     return fn(t, e)
   }
   subscription = topics.add(pattern, callOnce)
+  return subscription
 }
 
 function removeListener(topics: ReturnType<typeof createTopics>, pattern: string, fn: Handler): void {

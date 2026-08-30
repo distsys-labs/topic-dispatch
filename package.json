@@ -22,12 +22,11 @@
     "lint": "eslint src spec --ext .ts",
     "lint:fix": "eslint src spec --ext .ts --fix",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build && npm test",
-    "release": "standard-version"
+    "prepublishOnly": "npm run build && npm test"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/arobson/topic-dispatch"
+    "url": "https://github.com/distsys-labs/topic-dispatch"
   },
   "keywords": [
     "topic",
@@ -51,7 +50,6 @@
     "@types/node": "^22.10.5",
     "@vitest/coverage-v8": "^2.1.8",
     "eslint": "^9.18.0",
-    "standard-version": "^9.5.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.19.1",
     "vitest": "^2.1.8"
